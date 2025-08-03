@@ -1,316 +1,764 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaIndustry, FaTshirt, FaTools } from 'react-icons/fa';
-import './Inicio.css';
-import UniformesIndustriales from '/assets/Uniformes-industriales.jpg';
-import ArticulosPromocionales from '/assets/Articulos-Promocionales.jpg';
-import PlayerasPolo from '/assets/ventajas-de-usar-playeras-polo-bordadas-para-uniformes.jpg';
-import Chaqueta from '/assets/chaqueta.png';
-import Camisa from '/assets/camisa.png';
-import Uniforme from '/assets/uniforme.png';
-import Umu from '/assets/umu.jpeg';
-import Diferencia from '/assets/diferencia-entre-gerente-y-director.jpg';
-import CocaColaLogo from '/assets/Coca-Cola-logo (1).png';
-import SolfranLogo from '/assets/solfran_color.png';
-import Logo from '/assets/Logo catania blanco.png';
+import { FaIndustry, FaTshirt, FaTools, FaWhatsapp, FaPhone, FaEnvelope, FaQuoteLeft, FaStar, FaArrowRight, FaCheckCircle, FaShoppingCart } from 'react-icons/fa';
+
+// Imágenes de uniformes y artículos promocionales
+const UniformesIndustriales = "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=400&h=300&fit=crop"; // Uniformes médicos
+const ArticulosPromocionales = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop";
+const PlayerasPolo = "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop";
+const Chaqueta = "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=80&h=80&fit=crop";
+const Camisa = "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=80&h=80&fit=crop";
+const Uniforme = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop";
+const Umu = "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop";
+const Diferencia = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop";
+const CocaColaLogo = "https://via.placeholder.com/100x40/FF0000/FFFFFF?text=COCA-COLA";
+const SolfranLogo = "https://via.placeholder.com/100x40/0066CC/FFFFFF?text=SOLFRAN";
+const Logo = "https://via.placeholder.com/120x40/FFFFFF/0066CC?text=CATANIA";
+
+// Componente de animación de uniformes con CSS
+const UniformAnimation = () => {
+  const uniformElements = [
+    { icon: '👔', delay: 0, size: 'text-4xl', color: 'text-blue-400' },
+    { icon: '🥼', delay: 0.5, size: 'text-5xl', color: 'text-green-400' },
+    { icon: '👕', delay: 1, size: 'text-3xl', color: 'text-purple-400' },
+    { icon: '🦺', delay: 1.5, size: 'text-4xl', color: 'text-orange-400' },
+    { icon: '👔', delay: 2, size: 'text-3xl', color: 'text-indigo-400' },
+    { icon: '🥼', delay: 2.5, size: 'text-4xl', color: 'text-cyan-400' },
+    { icon: '👕', delay: 3, size: 'text-5xl', color: 'text-pink-400' },
+    { icon: '🦺', delay: 3.5, size: 'text-3xl', color: 'text-yellow-400' },
+  ];
+
+  return (
+    <div className="relative w-full h-96 overflow-hidden bg-gradient-to-br from-blue-900/20 to-indigo-900/20 rounded-2xl backdrop-blur-sm border border-white/10">
+      {/* Partículas de fondo */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full opacity-30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Uniformes animados */}
+      {uniformElements.map((uniform, index) => (
+        <motion.div
+          key={index}
+          className={`absolute ${uniform.size} ${uniform.color}`}
+          style={{
+            left: `${10 + (index % 4) * 20}%`,
+            top: `${20 + Math.floor(index / 4) * 30}%`,
+          }}
+          initial={{ 
+            opacity: 0, 
+            scale: 0,
+            rotate: -180,
+          }}
+          animate={{ 
+            opacity: [0, 1, 0.8, 1],
+            scale: [0, 1.2, 0.9, 1],
+            rotate: [0, 360],
+            y: [0, -10, 0],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            delay: uniform.delay,
+            ease: "easeInOut",
+          }}
+        >
+          {uniform.icon}
+        </motion.div>
+      ))}
+
+      {/* Efecto de brillo central */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-radial from-white/10 via-transparent to-transparent"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      
+      {/* Texto central */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          <div className="text-6xl mb-2">✨</div>
+          <div className="text-white font-semibold text-lg">Uniformes</div>
+          <div className="text-blue-200 text-sm">Profesionales</div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
 
 const Inicio = () => {
   const [cartItems, setCartItems] = useState(0);
-
+  const [email, setEmail] = useState('');
+  
   const addToCart = () => {
     setCartItems(cartItems + 1);
   };
 
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: "easeOut" }
+  };
+
+  const staggerChildren = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
-      {/* Hero Section */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white font-sans overflow-x-hidden">
+      {/* Hero Section Mejorado */}
       <motion.section
         id="inicio"
-        className="bg-blue-500 text-white py-20"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
+        className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white py-24 overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
       >
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">Uniformes y Artículos Promocionales para Todos</h1>
-            <p className="text-lg mb-6">Descubre la calidad y variedad que ofrecemos para vestir tu empresa o institución con estilo y profesionalismo.</p>
-            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-              <button className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">Contáctanos</button>
-              <button className="border border-white text-white px-6 py-2 rounded-lg hover:bg-white hover:text-blue-500 transition">Cotiza Ahora</button>
+        {/* Elementos decorativos de fondo */}
+        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        <div className="absolute top-20 right-20 w-72 h-72 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-orange-500 bg-opacity-20 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-12">
+          <motion.div 
+            className="lg:w-1/2 text-center lg:text-left"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="inline-flex items-center bg-orange-500 bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+            >
+              <FaCheckCircle className="mr-2 text-orange-300" />
+              <span className="text-sm font-medium text-orange-100">Más de 10 años de experiencia</span>
+            </motion.div>
+            
+            <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              Uniformes y Artículos 
+              <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent"> Promocionales</span>
+              <br />para Todos
+            </h1>
+            
+            <p className="text-xl mb-8 text-blue-100 leading-relaxed max-w-xl">
+              Descubre la calidad y variedad que ofrecemos para vestir tu empresa o institución con estilo y profesionalismo único.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <motion.button 
+                className="group bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaWhatsapp className="mr-2" />
+                Contáctanos
+                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+              
+              <motion.button 
+                className="group border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 flex items-center justify-center backdrop-blur-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Cotiza Ahora
+                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
             </div>
-          </div>
-          <div className="md:w-1/2 mt-8 md:mt-0">
-            <img src="/assets/Uniformes-industriales.jpg" alt="Uniformes" className="rounded-lg shadow-lg w-full" />
-          </div>
+            
+            {/* Stats mini */}
+            <div className="flex gap-8 text-sm">
+              <div className="text-center">
+                <div className="font-bold text-2xl text-orange-300">500+</div>
+                <div className="text-blue-200">Clientes felices</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-2xl text-orange-300">50+</div>
+                <div className="text-blue-200">Productos</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-2xl text-orange-300">24h</div>
+                <div className="text-blue-200">Respuesta</div>
+              </div>
+            </div>
+          </motion.div>
+          
+          <motion.div 
+            className="lg:w-1/2"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <div className="relative">
+              <UniformAnimation />
+            </div>
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* Productos */}
+      {/* Productos Section Mejorada */}
       <motion.section
         id="productos"
-        className="py-16 bg-white"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
+        className="py-24 bg-white"
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerChildren}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <span className="block text-center text-orange-500 font-semibold mb-2">Productos</span>
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Descubre Nuestras Amplias Categorías de Productos</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">En Catania, ofrecemos una variedad de productos diseñados para satisfacer las necesidades de tu empresa. Desde uniformes hasta artículos promocionales, cada categoría está pensada para brindarte calidad y distinción.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <article className="bg-gray-50 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:-translate-y-2">
-              <Link to="/uniformes">
-                <img src={UniformesIndustriales} alt="Uniformes" className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold text-gray-800">Uniformes</h3>
-                  <p className="text-gray-600 mt-2">Explora nuestra gama de uniformes industriales, médicos y escolares.</p>
-                  <div className="mt-4 flex space-x-2">
-                    <button onClick={addToCart} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Cotizar</button>
-                    <button className="border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-50 transition">Ver Detalles</button>
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              Productos
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              Descubre Nuestras Amplias 
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Categorías</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              En Catania, ofrecemos una variedad de productos diseñados para satisfacer las necesidades de tu empresa. Desde uniformes hasta artículos promocionales.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={staggerChildren}
+          >
+            {[
+              {
+                image: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=400&h=300&fit=crop",
+                title: "Uniformes",
+                description: "Explora nuestra gama de uniformes industriales, médicos y escolares de alta calidad.",
+                link: "/uniformes",
+                gradient: "from-blue-500 to-blue-600"
+              },
+              {
+                image: ArticulosPromocionales,
+                title: "Promocionales",
+                description: "Personaliza gorras, playeras y más para fortalecer tu marca empresarial.",
+                link: "/promocionales",
+                gradient: "from-green-500 to-green-600"
+              },
+              {
+                image: PlayerasPolo,
+                title: "Especiales",
+                description: "Desarrollamos diseños exclusivos que se adaptan perfectamente a tus necesidades.",
+                link: "/especiales",
+                gradient: "from-purple-500 to-purple-600"
+              }
+            ].map((product, index) => (
+              <motion.article
+                key={index}
+                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-100"
+                variants={fadeInUp}
+                whileHover={{ y: -8 }}
+              >
+                <Link to={product.link}>
+                  <div className="relative overflow-hidden">
+                    <img 
+                      src={product.image} 
+                      alt={product.title}
+                      className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-t ${product.gradient} opacity-0 group-hover:opacity-80 transition-opacity duration-300`}></div>
                   </div>
-                </div>
-              </Link>
-            </article>
-            <article className="bg-gray-50 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:-translate-y-2">
-              <Link to="/promocionales">
-                <img src={ArticulosPromocionales} alt="Promocionales" className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold text-gray-800">Promocionales</h3>
-                  <p className="text-gray-600 mt-2">Personaliza gorras, playeras y más para tu marca.</p>
-                  <div className="mt-4 flex space-x-2">
-                    <button onClick={addToCart} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Cotizar</button>
-                    <button className="border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-50 transition">Ver Detalles</button>
+                  
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+                      {product.title}
+                    </h3>
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      {product.description}
+                    </p>
+                    
+                    <div className="flex gap-3">
+                      <motion.button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          addToCart();
+                        }}
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Cotizar
+                      </motion.button>
+                      <motion.button 
+                        className="flex-1 border-2 border-blue-500 text-blue-500 px-4 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Ver Detalles
+                      </motion.button>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </article>
-            <article className="bg-gray-50 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition transform hover:-translate-y-2">
-              <Link to="/especiales">
-                <img src={PlayerasPolo} alt="Especiales" className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold text-gray-800">Especiales</h3>
-                  <p className="text-gray-600 mt-2">Desarrollamos diseños exclusivos que se adaptan a tus necesidades.</p>
-                  <div className="mt-4 flex space-x-2">
-                    <button onClick={addToCart} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Cotizar</button>
-                    <button className="border border-blue-500 text-blue-500 px-4 py-2 rounded hover:bg-blue-50 transition">Ver Detalles</button>
-                  </div>
-                </div>
-              </Link>
-            </article>
-          </div>
-          <div className="mt-8 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
-            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition">Ver más</button>
-            <a href="#" className="flex items-center text-orange-500 hover:text-orange-600 transition">
-              <span>Cotizar</span>
-              <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/ed280c87b2ec3f60ba5a8a4415e94110f00bb81de0a2a1bd58708615b7c7a97f?placeholderIfAbsent=true" alt="Arrow" className="w-6 h-6 ml-2" />
+                </Link>
+              </motion.article>
+            ))}
+          </motion.div>
+
+          <motion.div 
+            className="mt-16 flex flex-col sm:flex-row justify-center items-center gap-4"
+            variants={fadeInUp}
+          >
+            <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+              Ver más productos
+            </button>
+            <a href="#" className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors">
+              <span>Cotizar ahora</span>
+              <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </a>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* Servicios */}
+      {/* Servicios Section Mejorada */}
       <motion.section
         id="servicios"
-        className="py-16 bg-gray-100"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        className="py-24 bg-gradient-to-br from-gray-50 to-gray-100"
+        initial="initial"
+        whileInView="animate"
         viewport={{ once: true }}
+        variants={staggerChildren}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <span className="block text-center text-orange-500 font-semibold mb-2">Servicios</span>
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Descubre Nuestros Servicios de Personalización</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">En Catania, ofrecemos una variedad de servicios de personalización para satisfacer todas tus necesidades. Desde grabado láser hasta sublimado, cada opción está diseñada para brindar calidad y durabilidad.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <article className="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <img src={Chaqueta} alt="Variedad de Servicios" className="w-12 h-12 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800">Variedad de Servicios Disponibles</h3>
-              <p className="text-gray-600 mt-2">Cada servicio está pensado para ofrecerte lo mejor.</p>
-            </article>
-            <article className="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <img src={Camisa} alt="Calidad y Personalización" className="w-12 h-12 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800">Calidad y Personalización en Cada Proyecto</h3>
-              <p className="text-gray-600 mt-2">Transformamos tus ideas en productos únicos.</p>
-            </article>
-            <article className="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <img src={Uniforme} alt="Contáctanos" className="w-12 h-12 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-800">Contáctanos para Más Información</h3>
-              <p className="text-gray-600 mt-2">Estamos aquí para ayudarte a crear.</p>
-            </article>
-          </div>
-          <div className="mt-8 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
-            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition">Ver Más</button>
-            <a href="#" className="flex items-center text-orange-500 hover:text-orange-600 transition">
-              <span>Servicios</span>
-              <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/ed280c87b2ec3f60ba5a8a4415e94110f00bb81de0a2a1bd58708615b7c7a97f?placeholderIfAbsent=true" alt="Arrow" className="w-6 h-6 ml-2" />
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              Servicios
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              Servicios de 
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Personalización</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Ofrecemos una variedad de servicios de personalización para satisfacer todas tus necesidades con la más alta calidad.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={staggerChildren}
+          >
+            {[
+              {
+                image: Chaqueta,
+                title: "Variedad de Servicios Disponibles",
+                description: "Cada servicio está pensado para ofrecerte lo mejor en personalización y calidad.",
+                icon: "🎨"
+              },
+              {
+                image: Camisa,
+                title: "Calidad y Personalización en Cada Proyecto",
+                description: "Transformamos tus ideas en productos únicos que reflejan tu marca perfectamente.",
+                icon: "⭐"
+              },
+              {
+                image: Uniforme,
+                title: "Contáctanos para Más Información",
+                description: "Estamos aquí para ayudarte a crear productos excepcionales para tu empresa.",
+                icon: "📞"
+              }
+            ].map((service, index) => (
+              <motion.article
+                key={index}
+                className="group text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100"
+                variants={fadeInUp}
+                whileHover={{ y: -8 }}
+              >
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {service.icon}
+                  </div>
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-800 mb-4 group-hover:text-blue-600 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {service.description}
+                </p>
+              </motion.article>
+            ))}
+          </motion.div>
+
+          <motion.div 
+            className="mt-16 flex flex-col sm:flex-row justify-center items-center gap-4"
+            variants={fadeInUp}
+          >
+            <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+              Ver Más Servicios
+            </button>
+            <a href="#" className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors">
+              <span>Servicios completos</span>
+              <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </a>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* Calidad */}
+      {/* Calidad Section */}
       <motion.section
         id="calidad"
-        className="py-16 bg-white"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        className="py-24 bg-white"
+        initial="initial"
+        whileInView="animate"
         viewport={{ once: true }}
+        variants={staggerChildren}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <span className="block text-center text-orange-500 font-semibold mb-2">Calidad</span>
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Descubre Nuestros Productos Destacados</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">En Catania, ofrecemos una variedad de productos diseñados para satisfacer las necesidades de tu empresa. Desde uniformes hasta artículos promocionales, tenemos todo lo que necesitas.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <article className="text-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <FaIndustry className="text-blue-500 text-4xl mx-auto mb-4" />
-              <Link to="/uniformes-destacados">
-                <h3 className="text-xl font-semibold text-gray-800 hover:text-blue-500 transition">Uniformes para Cada Ocasión</h3>
-              </Link>
-              <p className="text-gray-600 mt-2">Nuestros uniformes son ideales para cualquier industria.</p>
-            </article>
-            <article className="text-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <FaTshirt className="text-blue-500 text-4xl mx-auto mb-4" />
-              <Link to="/promocionales-destacados">
-                <h3 className="text-xl font-semibold text-gray-800 hover:text-blue-500 transition">Artículos Promocionales que Impactan</h3>
-              </Link>
-              <p className="text-gray-600 mt-2">Aumenta la visibilidad de tu marca con nuestros productos.</p>
-            </article>
-            <article className="text-center p-6 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <FaTools className="text-blue-500 text-4xl mx-auto mb-4" />
-              <Link to="/especiales-destacados">
-                <h3 className="text-xl font-semibold text-gray-800 hover:text-blue-500 transition">Soluciones Especiales a Medida</h3>
-              </Link>
-              <p className="text-gray-600 mt-2">Creamos productos personalizados que se adaptan a tus necesidades.</p>
-            </article>
-          </div>
-          <div className="mt-8 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
-            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition">Ver Más</button>
-            <a href="#" className="flex items-center text-orange-500 hover:text-orange-600 transition">
-              <span>Cotizar</span>
-              <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/ed280c87b2ec3f60ba5a8a4415e94110f00bb81de0a2a1bd58708615b7c7a97f?placeholderIfAbsent=true" alt="Arrow" className="w-6 h-6 ml-2" />
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              Calidad
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              Productos 
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Destacados</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Ofrecemos productos diseñados para satisfacer las necesidades más exigentes de tu empresa con calidad excepcional.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={staggerChildren}
+          >
+            {[
+              {
+                icon: FaIndustry,
+                title: "Uniformes para Cada Ocasión",
+                description: "Nuestros uniformes son ideales para cualquier industria y situación laboral.",
+                link: "/uniformes-destacados",
+                color: "blue"
+              },
+              {
+                icon: FaTshirt,
+                title: "Artículos Promocionales que Impactan",
+                description: "Aumenta la visibilidad de tu marca con nuestros productos promocionales únicos.",
+                link: "/promocionales-destacados",
+                color: "green"
+              },
+              {
+                icon: FaTools,
+                title: "Soluciones Especiales a Medida",
+                description: "Creamos productos personalizados que se adaptan perfectamente a tus necesidades.",
+                link: "/especiales-destacados",
+                color: "purple"
+              }
+            ].map((item, index) => (
+              <motion.article
+                key={index}
+                className="group text-center p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-200"
+                variants={fadeInUp}
+                whileHover={{ y: -8 }}
+              >
+                <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-${item.color}-500 to-${item.color}-600 text-white rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <item.icon className="text-2xl" />
+                </div>
+                
+                <Link to={item.link}>
+                  <h3 className="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors mb-4">
+                    {item.title}
+                  </h3>
+                </Link>
+                <p className="text-gray-600 leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.article>
+            ))}
+          </motion.div>
+
+          <motion.div 
+            className="mt-16 flex flex-col sm:flex-row justify-center items-center gap-4"
+            variants={fadeInUp}
+          >
+            <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+              Ver Más Productos
+            </button>
+            <a href="#" className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors">
+              <span>Cotizar productos</span>
+              <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </a>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* Testimonios */}
+      {/* Testimonios Mejorados */}
       <motion.section
         id="testimonios"
-        className="py-16 bg-gray-100"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        className="py-24 bg-gradient-to-br from-gray-50 to-gray-100"
+        initial="initial"
+        whileInView="animate"
         viewport={{ once: true }}
+        variants={staggerChildren}
       >
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Testimonios de Clientes</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Lo que dicen nuestros clientes satisfechos.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <article className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <div className="flex items-center mb-4">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/eb836d67db2cb88a07d3bfb6c04e827b8107519d060019054b00f64f4bfcdb6e?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/37883a6fba3ace056b1a03ea77e2a9815b18e62b74b42ad46c1ee92c378d083d?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/a6cb77722ab4547c5ba00b55bd7795508a18c0bfd566c8e55990d135b041c652?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/a6cb77722ab4547c5ba00b55bd7795508a18c0bfd566c8e55990d135b041c652?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/134bb5145f2b4bf6a830b722256841b032a1956d21e22ce91868d93ccf0032da?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-              </div>
-              <blockquote className="text-gray-800 italic mb-4">"La calidad de los uniformes es excepcional y el servicio, impecable."</blockquote>
-              <div className="flex items-center">
-                <img src={Umu} alt="María López" className="w-12 h-12 rounded-full mr-4" />
-                <div>
-                  <p className="font-semibold">María López</p>
-                  <p className="text-gray-600">Gerente, Coca Cola</p>
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              Testimonios
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              Lo que Dicen Nuestros 
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Clientes</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              La satisfacción de nuestros clientes es nuestro mayor logro y motivación diaria.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+            variants={staggerChildren}
+          >
+            {[
+              {
+                quote: "La calidad de los uniformes es excepcional y el servicio al cliente es impecable. Definitivamente recomendamos Catania.",
+                author: "María López",
+                position: "Gerente",
+                company: "Coca Cola",
+                avatar: Umu,
+                logo: CocaColaLogo,
+                rating: 5
+              },
+              {
+                quote: "Catania siempre cumple con nuestras expectativas y plazos de entrega. Su equipo es muy profesional y dedicado.",
+                author: "Juan Pérez",
+                position: "Trabajador",
+                company: "Solfran",
+                avatar: Diferencia,
+                logo: SolfranLogo,
+                rating: 5
+              }
+            ].map((testimonial, index) => (
+              <motion.article
+                key={index}
+                className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden"
+                variants={fadeInUp}
+                whileHover={{ y: -8 }}
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
+                
+                <FaQuoteLeft className="text-3xl text-blue-500 mb-6 opacity-50" />
+                
+                <div className="flex items-center mb-6">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <FaStar key={i} className="text-yellow-400 text-sm" />
+                  ))}
                 </div>
-                <div className="mx-4 h-12 border-l border-gray-300"></div>
-                <img src={CocaColaLogo} alt="Company Logo" className="w-24 h-auto" />
-              </div>
-            </article>
-            <article className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-2">
-              <div className="flex items-center mb-4">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/eb836d67db2cb88a07d3bfb6c04e827b8107519d060019054b00f64f4bfcdb6e?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/39b0f99ac07fda11985b9ee37235670a3216a51cd0a1f635d5d9ba465d756a37?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/bf2d2cc3be0b30591a2d58770d523f82e4d8564c6ff72aef4906e243f6fbad06?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/191c58afd08f2bf3ec8d1128458678242edcf02a4215ded5f389072f7623a540?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/0e534d2a40d12da36396af7667deba63c164bf8caa602f9902cd8c30ac6ca5ff?placeholderIfAbsent=true" alt="Star" className="w-5 h-5" />
-              </div>
-              <blockquote className="text-gray-800 italic mb-4">"Catania siempre cumple con nuestras expectativas y plazos."</blockquote>
-              <div className="flex items-center">
-                <img src={Diferencia} alt="Juan Pérez" className="w-12 h-12 rounded-full mr-4" />
-                <div>
-                  <p className="font-semibold">Juan Pérez</p>
-                  <p className="text-gray-600">Trabajador, Solfran</p>
+                
+                <blockquote className="text-gray-800 text-lg italic mb-8 leading-relaxed relative z-10">
+                  "{testimonial.quote}"
+                </blockquote>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <img 
+                      src={testimonial.avatar} 
+                      alt={testimonial.author}
+                      className="w-14 h-14 rounded-full mr-4 object-cover border-2 border-gray-200"
+                    />
+                    <div>
+                      <p className="font-bold text-gray-800">{testimonial.author}</p>
+                      <p className="text-gray-600 text-sm">{testimonial.position}, {testimonial.company}</p>
+                    </div>
+                  </div>
+                  
+                  <img 
+                    src={testimonial.logo} 
+                    alt={`${testimonial.company} Logo`}
+                    className="h-8 opacity-70 group-hover:opacity-100 transition-opacity"
+                  />
                 </div>
-                <div className="mx-4 h-12 border-l border-gray-300"></div>
-                <img src={SolfranLogo} alt="Company Logo" className="w-24 h-auto" />
-              </div>
-            </article>
-          </div>
+              </motion.article>
+            ))}
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* CTA */}
+      {/* CTA Mejorado */}
       <motion.section
         id="contacto"
-        className="py-16 bg-blue-600 text-white"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        className="py-24 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden"
+        initial="initial"
+        whileInView="animate"
         viewport={{ once: true }}
       >
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Descarga nuestro catálogo hoy</h2>
-          <p className="text-lg mb-6 max-w-3xl mx-auto">Solicita información sobre nuestros productos y servicios personalizados para tu empresa o institución.</p>
-          <div className="max-w-md mx-auto flex flex-col space-y-4">
-            <input type="email" placeholder="Tu correo electrónico" className="w-full p-3 rounded-lg text-gray-800" />
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <button className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">Descargar</button>
-              <button className="border border-white text-white px-6 py-2 rounded-lg hover:bg-white hover:text-blue-500 transition">Consultar</button>
+        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        <div className="absolute top-20 right-20 w-72 h-72 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-4xl mx-auto px-4 text-center">
+          <motion.div variants={fadeInUp}>
+            <span className="inline-block bg-orange-500 bg-opacity-20 backdrop-blur-sm text-orange-200 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              Descarga Gratis
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              Descarga nuestro 
+              <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent"> catálogo</span> hoy
+            </h2>
+            <p className="text-xl mb-12 text-blue-100 leading-relaxed max-w-2xl mx-auto">
+              Solicita información sobre nuestros productos y servicios personalizados para tu empresa o institución. ¡Es completamente gratis!
+            </p>
+            
+            <div className="max-w-md mx-auto">
+              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <input 
+                  type="email" 
+                  placeholder="Tu correo electrónico" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 p-4 rounded-xl text-gray-800 border-0 focus:ring-4 focus:ring-orange-300 outline-none shadow-lg"
+                />
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <motion.button 
+                  className="group flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Descargar Catálogo
+                  <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </motion.button>
+                
+                <motion.button 
+                  className="group flex-1 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 flex items-center justify-center backdrop-blur-sm"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <FaPhone className="mr-2" />
+                  Consultar
+                </motion.button>
+              </div>
             </div>
-          </div>
+            
+            {/* Contact info rápido */}
+            <div className="mt-12 flex flex-col sm:flex-row justify-center gap-8 text-blue-100">
+              <div className="flex items-center gap-2">
+                <FaWhatsapp className="text-green-400" />
+                <span>WhatsApp: +52 123 456 7890</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <FaEnvelope className="text-orange-400" />
+                <span>info@catania.com</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </motion.section>
 
-      {/* Footer */}
-      <footer className="bg-blue-600 text-white py-4">
+      {/* Footer Mejorado */}
+      <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex-shrink-0">
-              <img src={Logo} alt="Company Logo" className="h-8" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Logo y descripción */}
+            <div className="md:col-span-1">
+              <img src={Logo} alt="Catania Logo" className="h-10 mb-4" />
+              <p className="text-gray-400 leading-relaxed">
+                Especialistas en uniformes y artículos promocionales de alta calidad para empresas e instituciones.
+              </p>
             </div>
-            <nav className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 text-center text-sm">
-              <a href="#" className="hover:text-orange-300 transition">Inicio Rápido</a>
-              <a href="#" className="hover:text-orange-300 transition">Nuestros Servicios</a>
-              <a href="#" className="hover:text-orange-300 transition">Contáctanos</a>
-              <a href="#" className="hover:text-orange-300 transition">Sobre Nosotros</a>
-              <a href="#" className="hover:text-orange-300 transition">Política de Cookies</a>
-            </nav>
-            <div className="flex space-x-3">
-              <a href="#" className="hover:text-orange-300 transition">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/7ae4f0171ecca53d8c3a0688d908f90af9103568ffb475a890b5004b12fbb0f6?placeholderIfAbsent=true" alt="Social Media" className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-orange-300 transition">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/a189fa197e66326a023943ed5648a93d7b8d7a7e66ae92cbde842e1eb69df910?placeholderIfAbsent=true" alt="Social Media" className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-orange-300 transition">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/ea2655b2a6406e9c5ef418d4752d0ca75d18f674fbf5c5a0ad097e8d5c483752?placeholderIfAbsent=true" alt="Social Media" className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-orange-300 transition">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/b7ddadb29dfd732a506b3d7e97a39490da61c4634197af1815a44a6d1bd263ee?placeholderIfAbsent=true" alt="Social Media" className="w-5 h-5" />
-              </a>
-              <a href="#" className="hover:text-orange-300 transition">
-                <img src="https://cdn.builder.io/api/v1/image/assets/19212d5c728649939294929a3b45f164/a019f9560bf3692196da88680e3a168af36177883dce666c75305bc72e50c60a?placeholderIfAbsent=true" alt="Social Media" className="w-5 h-5" />
-              </a>
+            
+            {/* Enlaces rápidos */}
+            <div>
+              <h4 className="font-bold text-lg mb-4 text-orange-400">Enlaces Rápidos</h4>
+              <nav className="flex flex-col space-y-2">
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Inicio</a>
+                <a href="#productos" className="text-gray-400 hover:text-white transition-colors">Productos</a>
+                <a href="#servicios" className="text-gray-400 hover:text-white transition-colors">Servicios</a>
+                <a href="#contacto" className="text-gray-400 hover:text-white transition-colors">Contacto</a>
+              </nav>
+            </div>
+            
+            {/* Productos */}
+            <div>
+              <h4 className="font-bold text-lg mb-4 text-orange-400">Productos</h4>
+              <nav className="flex flex-col space-y-2">
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Uniformes</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Promocionales</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Especiales</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Catálogo</a>
+              </nav>
+            </div>
+            
+            {/* Contacto */}
+            <div>
+              <h4 className="font-bold text-lg mb-4 text-orange-400">Contacto</h4>
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <FaWhatsapp className="text-green-400" />
+                  <span>+52 123 456 7890</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <FaEnvelope />
+                  <span>info@catania.com</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <FaPhone />
+                  <span>+52 55 1234 5678</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mt-4 border-t border-blue-400 pt-2 flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-4 text-xs">
-            <span>© 2025 Catania. Todos los derechos reservados.</span>
-            <a href="#" className="hover:text-orange-300 transition">Política de Privacidad</a>
-            <a href="#" className="hover:text-orange-300 transition">Términos de Servicio</a>
-            <a href="#" className="hover:text-orange-300 transition">Configuración de Cookies</a>
+          
+          {/* Redes sociales y copyright */}
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-6">
+              <span className="text-gray-400 text-sm">© 2025 Catania. Todos los derechos reservados.</span>
+              <div className="flex gap-2 text-xs">
+                <a href="#" className="text-gray-500 hover:text-white transition-colors">Política de Privacidad</a>
+                <span className="text-gray-600">•</span>
+                <a href="#" className="text-gray-500 hover:text-white transition-colors">Términos de Servicio</a>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <span className="text-gray-400 text-sm">Síguenos:</span>
+              <div className="flex gap-3">
+                {['facebook', 'instagram', 'twitter', 'linkedin', 'youtube'].map((social, index) => (
+                  <a 
+                    key={social}
+                    href="#" 
+                    className="w-10 h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  >
+                    <span className="text-sm font-bold">{social[0].toUpperCase()}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </footer>
