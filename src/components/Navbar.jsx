@@ -74,6 +74,7 @@ const Navbar = () => {
               </Link>
             ))}
           </div>
+
           <div className="flex gap-3 ml-6">
             <a
               href="mailto:ventas2@catania.com.mx?subject=Solicitud%20de%20información&body=Hola,%20quisiera%20saber%20..."
@@ -82,7 +83,9 @@ const Navbar = () => {
               Enviar
             </a>
             <a
-              href="tel:+523338533555"
+              href="https://wa.me/5212345678900?text=Hola,%20me%20interesa%20cotizar%20sus%20productos"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-4 py-2 bg-orange-500 rounded-lg font-semibold hover:bg-orange-600 transition"
             >
               Cotizar
@@ -151,6 +154,7 @@ const Navbar = () => {
               </svg>
             </button>
           </form>
+
           {/* Nav links mobile */}
           {navLinks.map((link) => (
             <Link
@@ -164,6 +168,7 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+
           <div className="flex flex-col gap-3 pt-3">
             <a
               href="mailto:ventas2@catania.com.mx?subject=Solicitud%20de%20información&body=Hola,%20quisiera%20saber%20..."
@@ -173,7 +178,9 @@ const Navbar = () => {
               Enviar
             </a>
             <a
-              href="tel:+523338533555"
+              href="https://wa.me/5212345678900?text=Hola,%20me%20interesa%20cotizar%20sus%20productos"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-4 py-2 bg-orange-500 rounded-lg font-semibold hover:bg-orange-600 transition text-center"
               onClick={() => setIsMobileMenuOpen(false)}
             >

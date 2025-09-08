@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaIndustry, FaTshirt, FaTools, FaWhatsapp, FaPhone, FaEnvelope, FaQuoteLeft, FaStar, FaArrowRight, FaCheckCircle, FaShoppingCart } from 'react-icons/fa';
+import { FaIndustry, FaTshirt, FaTools, FaWhatsapp, FaPhone, FaEnvelope, FaQuoteLeft, FaStar, FaArrowRight, FaCheckCircle, FaShoppingCart, FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaYoutube } from 'react-icons/fa';
 
 // Imágenes de uniformes y artículos promocionales
 const UniformesIndustriales = "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=400&h=300&fit=crop"; // Uniformes médicos
@@ -16,52 +16,141 @@ const CocaColaLogo = "https://via.placeholder.com/100x40/FF0000/FFFFFF?text=COCA
 const SolfranLogo = "https://via.placeholder.com/100x40/0066CC/FFFFFF?text=SOLFRAN";
 const Logo = "https://via.placeholder.com/120x40/FFFFFF/0066CC?text=CATANIA";
 
-// Componente de animación de uniformes con CSS
-const UniformAnimation = () => {
+// Componente de animación de uniformes y promocionales mejorado para todo el hero
+const EnhancedUniformAnimation = () => {
   const uniformElements = [
-    { icon: '👔', delay: 0, size: 'text-4xl', color: 'text-blue-400' },
-    { icon: '🥼', delay: 0.5, size: 'text-5xl', color: 'text-green-400' },
-    { icon: '👕', delay: 1, size: 'text-3xl', color: 'text-purple-400' },
-    { icon: '🦺', delay: 1.5, size: 'text-4xl', color: 'text-orange-400' },
-    { icon: '👔', delay: 2, size: 'text-3xl', color: 'text-indigo-400' },
-    { icon: '🥼', delay: 2.5, size: 'text-4xl', color: 'text-cyan-400' },
-    { icon: '👕', delay: 3, size: 'text-5xl', color: 'text-pink-400' },
-    { icon: '🦺', delay: 3.5, size: 'text-3xl', color: 'text-yellow-400' },
+    { icon: '👔', delay: 0, size: 'text-4xl', color: 'text-blue-400', x: 15, y: 20 },
+    { icon: '🥼', delay: 0.5, size: 'text-5xl', color: 'text-green-400', x: 85, y: 15 },
+    { icon: '👕', delay: 1, size: 'text-3xl', color: 'text-purple-400', x: 25, y: 70 },
+    { icon: '🦺', delay: 1.5, size: 'text-4xl', color: 'text-orange-400', x: 75, y: 65 },
+    { icon: '🧥', delay: 2, size: 'text-3xl', color: 'text-indigo-400', x: 10, y: 45 },
+    { icon: '👗', delay: 2.5, size: 'text-4xl', color: 'text-pink-400', x: 90, y: 40 },
   ];
 
+  const promocionalElements = [
+    { icon: '✏️', delay: 3, size: 'text-3xl', color: 'text-red-400', x: 20, y: 10 },
+    { icon: '🎒', delay: 3.5, size: 'text-4xl', color: 'text-cyan-400', x: 80, y: 80 },
+    { icon: '🧢', delay: 4, size: 'text-3xl', color: 'text-yellow-400', x: 30, y: 85 },
+    { icon: '🍶', delay: 4.5, size: 'text-4xl', color: 'text-pink-400', x: 70, y: 25 },
+    { icon: '📓', delay: 5, size: 'text-3xl', color: 'text-indigo-400', x: 5, y: 75 },
+    { icon: '🖊️', delay: 5.5, size: 'text-4xl', color: 'text-teal-400', x: 95, y: 55 },
+    { icon: '👜', delay: 6, size: 'text-3xl', color: 'text-violet-400', x: 40, y: 5 },
+    { icon: '🏷️', delay: 6.5, size: 'text-4xl', color: 'text-emerald-400', x: 60, y: 90 },
+    { icon: '📱', delay: 7, size: 'text-3xl', color: 'text-orange-300', x: 12, y: 30 },
+    { icon: '🎯', delay: 7.5, size: 'text-4xl', color: 'text-blue-300', x: 88, y: 70 },
+  ];
+
+  const allElements = [...uniformElements, ...promocionalElements];
+
   return (
-    <div className="relative w-full h-96 overflow-hidden bg-gradient-to-br from-blue-900/20 to-indigo-900/20 rounded-2xl backdrop-blur-sm border border-white/10">
-      {/* Partículas de fondo */}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Ondas de fondo animadas */}
       <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.1)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.05)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.1)" />
+            </linearGradient>
+            <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgba(251,146,60,0.1)" />
+              <stop offset="50%" stopColor="rgba(251,146,60,0.05)" />
+              <stop offset="100%" stopColor="rgba(251,146,60,0.1)" />
+            </linearGradient>
+          </defs>
+          
+          <motion.path
+            d="M0,400 Q300,200 600,400 T1200,400 V800 H0 Z"
+            fill="url(#wave1)"
+            initial={{ d: "M0,400 Q300,200 600,400 T1200,400 V800 H0 Z" }}
+            animate={{ 
+              d: [
+                "M0,400 Q300,200 600,400 T1200,400 V800 H0 Z",
+                "M0,350 Q300,250 600,350 T1200,350 V800 H0 Z",
+                "M0,400 Q300,200 600,400 T1200,400 V800 H0 Z"
+              ]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          
+          <motion.path
+            d="M0,500 Q400,300 800,500 T1200,500 V800 H0 Z"
+            fill="url(#wave2)"
+            initial={{ d: "M0,500 Q400,300 800,500 T1200,500 V800 H0 Z" }}
+            animate={{ 
+              d: [
+                "M0,500 Q400,300 800,500 T1200,500 V800 H0 Z",
+                "M0,450 Q400,350 800,450 T1200,450 V800 H0 Z",
+                "M0,500 Q400,300 800,500 T1200,500 V800 H0 Z"
+              ]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+        </svg>
+      </div>
+
+      {/* Partículas flotantes mejoradas */}
+      <div className="absolute inset-0">
+        {[...Array(30)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-white rounded-full opacity-30"
+            className="absolute w-2 h-2 bg-gradient-to-r from-white/30 to-orange-300/30 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.8, 0.3],
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              opacity: [0.2, 0.8, 0.2],
+              scale: [0.5, 1.2, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 4 + Math.random() * 3,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: Math.random() * 3,
+              ease: "easeInOut",
             }}
           />
         ))}
       </div>
 
-      {/* Uniformes animados */}
-      {uniformElements.map((uniform, index) => (
+      {/* Círculos decorativos animados */}
+      <div className="absolute inset-0">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`circle-${i}`}
+            className="absolute rounded-full border border-white/10"
+            style={{
+              width: `${100 + i * 50}px`,
+              height: `${100 + i * 50}px`,
+              left: `${20 + i * 10}%`,
+              top: `${10 + i * 8}%`,
+            }}
+            animate={{
+              scale: [1, 1.1, 1],
+              opacity: [0.1, 0.3, 0.1],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 15 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i * 0.5,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Elementos de uniformes y promocionales distribuidos */}
+      {allElements.map((element, index) => (
         <motion.div
           key={index}
-          className={`absolute ${uniform.size} ${uniform.color}`}
+          className={`absolute ${element.size} ${element.color} drop-shadow-lg`}
           style={{
-            left: `${10 + (index % 4) * 20}%`,
-            top: `${20 + Math.floor(index / 4) * 30}%`,
+            left: `${element.x}%`,
+            top: `${element.y}%`,
           }}
           initial={{ 
             opacity: 0, 
@@ -70,48 +159,65 @@ const UniformAnimation = () => {
           }}
           animate={{ 
             opacity: [0, 1, 0.8, 1],
-            scale: [0, 1.2, 0.9, 1],
+            scale: [0, 1.3, 0.9, 1],
             rotate: [0, 360],
-            y: [0, -10, 0],
+            y: [0, -15, 0],
+            x: [0, Math.sin(index) * 10, 0],
           }}
           transition={{
-            duration: 4,
+            duration: 6,
             repeat: Infinity,
-            delay: uniform.delay,
+            delay: element.delay,
             ease: "easeInOut",
           }}
         >
-          {uniform.icon}
+          {element.icon}
         </motion.div>
       ))}
 
-      {/* Efecto de brillo central */}
+      {/* Efecto de brillo que se mueve */}
       <motion.div
         className="absolute inset-0 bg-gradient-radial from-white/10 via-transparent to-transparent"
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
+          scale: [1, 1.5, 1],
+          opacity: [0.1, 0.3, 0.1],
+          x: [-100, 100, -100],
         }}
         transition={{
-          duration: 3,
+          duration: 12,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       />
-      
-      {/* Texto central */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          <div className="text-6xl mb-2">✨</div>
-          <div className="text-white font-semibold text-lg">Uniformes</div>
-          <div className="text-blue-200 text-sm">Profesionales</div>
-        </motion.div>
-      </div>
+
+      {/* Líneas conectoras animadas */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {allElements.map((element, index) => {
+          const nextElement = allElements[(index + 1) % allElements.length];
+          return (
+            <motion.line
+              key={`line-${index}`}
+              x1={`${element.x}%`}
+              y1={`${element.y}%`}
+              x2={`${nextElement.x}%`}
+              y2={`${nextElement.y}%`}
+              stroke="rgba(255,255,255,0.1)"
+              strokeWidth="0.1"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ 
+                pathLength: [0, 1, 0],
+                opacity: [0, 0.3, 0],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                delay: element.delay + 2,
+                ease: "easeInOut",
+              }}
+            />
+          );
+        })}
+      </svg>
     </div>
   );
 };
@@ -122,6 +228,16 @@ const Inicio = () => {
   
   const addToCart = () => {
     setCartItems(cartItems + 1);
+  };
+
+  // Función para abrir WhatsApp
+  const openWhatsApp = () => {
+    window.open('https://wa.me/5212345678900?text=Hola,%20me%20interesa%20cotizar%20sus%20productos', '_blank');
+  };
+
+  // Función para abrir email de cotización
+  const openQuoteEmail = () => {
+    window.location.href = 'mailto:ventas2@catania.com.mx?subject=Solicitud de Cotización&body=Hola, me gustaría solicitar una cotización para sus productos.';
   };
 
   const fadeInUp = {
@@ -143,91 +259,245 @@ const Inicio = () => {
       {/* Hero Section Mejorado */}
       <motion.section
         id="inicio"
-        className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white py-24 overflow-hidden"
+        className="relative min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 text-white flex items-center overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* Elementos decorativos de fondo */}
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-        <div className="absolute top-20 right-20 w-72 h-72 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-orange-500 bg-opacity-20 rounded-full blur-3xl"></div>
+        {/* Capa de overlay sutil */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/10"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-12">
-          <motion.div 
-            className="lg:w-1/2 text-center lg:text-left"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="inline-flex items-center bg-orange-500 bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+        {/* Animación de uniformes y promocionales en todo el hero */}
+        <EnhancedUniformAnimation />
+        
+        {/* Elementos decorativos adicionales */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-gradient-to-br from-orange-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 py-20 z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            {/* Contenido principal */}
+            <motion.div 
+              className="lg:w-1/2 text-center lg:text-left"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <FaCheckCircle className="mr-2 text-orange-300" />
-              <span className="text-sm font-medium text-orange-100">Más de 10 años de experiencia</span>
+              {/* Badge de experiencia */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="inline-flex items-center bg-gradient-to-r from-orange-500/20 to-orange-600/20 backdrop-blur-md rounded-full px-6 py-3 mb-8 border border-orange-300/20"
+              >
+                <FaCheckCircle className="mr-3 text-orange-300 text-lg" />
+                <span className="text-sm font-semibold text-orange-100 tracking-wide">Más de 25 años de experiencia</span>
+              </motion.div>
+              
+              {/* Título principal mejorado */}
+              <motion.h1 
+                className="text-5xl lg:text-7xl font-bold mb-8 leading-tight"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <span className="block">Uniformes y</span>
+                <span className="block bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
+                  Artículos
+                </span>
+                <motion.span 
+                  className="block"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 1 }}
+                >
+                  Promocionales
+                </motion.span>
+                <span className="block text-4xl lg:text-5xl mt-2 text-blue-100">para Todos</span>
+              </motion.h1>
+              
+              {/* Descripción mejorada */}
+              <motion.p 
+                className="text-xl lg:text-2xl mb-10 text-blue-100 leading-relaxed max-w-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                Descubre la <span className="font-semibold text-white">calidad</span> y <span className="font-semibold text-white">variedad</span> que ofrecemos para vestir tu empresa o institución con <span className="text-orange-300 font-semibold">estilo y profesionalismo único</span>.
+              </motion.p>
+              
+              {/* Botones de acción mejorados */}
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-6 mb-12"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
+              >
+                <motion.button 
+                  onClick={openWhatsApp}
+                  className="group relative bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-orange-500/25 transition-all duration-300 overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center justify-center">
+                    <FaWhatsapp className="mr-3 text-xl" />
+                    Contáctanos
+                    <FaArrowRight className="ml-3 group-hover:translate-x-2 transition-transform duration-300" />
+                  </div>
+                </motion.button>
+                
+                <motion.button 
+                  onClick={openQuoteEmail}
+                  className="group relative border-3 border-white/30 text-white px-10 py-5 rounded-2xl font-bold text-lg backdrop-blur-md hover:bg-white hover:text-blue-600 transition-all duration-300 overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center justify-center">
+                    <FaEnvelope className="mr-3 text-xl" />
+                    Cotiza Ahora
+                    <FaArrowRight className="ml-3 group-hover:translate-x-2 transition-transform duration-300" />
+                  </div>
+                </motion.button>
+              </motion.div>
+              
+              {/* Estadísticas mejoradas */}
+              <motion.div 
+                className="grid grid-cols-3 gap-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
+              >
+                {[
+                  { number: "500+", label: "Clientes felices", icon: "😊" },
+                  { number: "100K+", label: "Productos", icon: "📦" },
+                  { number: "24h", label: "Respuesta", icon: "⚡" }
+                ].map((stat, index) => (
+                  <motion.div 
+                    key={index}
+                    className="text-center group"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="text-3xl mb-1">{stat.icon}</div>
+                    <div className="font-bold text-3xl lg:text-4xl text-orange-300 mb-1">{stat.number}</div>
+                    <div className="text-blue-200 text-sm lg:text-base font-medium">{stat.label}</div>
+                  </motion.div>
+                ))}
+              </motion.div>
             </motion.div>
             
-            <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              Uniformes y Artículos 
-              <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent"> Promocionales</span>
-              <br />para Todos
-            </h1>
-            
-            <p className="text-xl mb-8 text-blue-100 leading-relaxed max-w-xl">
-              Descubre la calidad y variedad que ofrecemos para vestir tu empresa o institución con estilo y profesionalismo único.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <motion.button 
-                className="group bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <FaWhatsapp className="mr-2" />
-                Contáctanos
-                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-              
-              <motion.button 
-                className="group border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 flex items-center justify-center backdrop-blur-sm"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Cotiza Ahora
-                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-            </div>
-            
-            {/* Stats mini */}
-            <div className="flex gap-8 text-sm">
-              <div className="text-center">
-                <div className="font-bold text-2xl text-orange-300">500+</div>
-                <div className="text-blue-200">Clientes felices</div>
+            {/* Lado derecho - Contenido visual mejorado */}
+            <motion.div 
+              className="lg:w-1/2 relative"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <div className="relative max-w-lg mx-auto">
+                {/* Tarjeta principal flotante */}
+                <motion.div 
+                  className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl"
+                  animate={{ 
+                    y: [0, -10, 0],
+                    rotateY: [0, 5, 0],
+                  }}
+                  transition={{ 
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <div className="text-center mb-6">
+                    <motion.div 
+                      className="text-6xl mb-4"
+                      animate={{ 
+                        rotate: [0, 10, -10, 0],
+                        scale: [1, 1.1, 1],
+                      }}
+                      transition={{ 
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      ✨
+                    </motion.div>
+                    <h3 className="text-3xl font-bold text-white mb-2">Calidad Premium</h3>
+                    <p className="text-blue-200 text-lg">Uniformes & Promocionales</p>
+                  </div>
+                  
+                  {/* Mini galería de productos */}
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    {['👔', '🎒', '🧢'].map((icon, index) => (
+                      <motion.div
+                        key={index}
+                        className="bg-white/10 rounded-xl p-4 text-center text-2xl"
+                        animate={{ 
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 5, -5, 0],
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          delay: index * 0.5,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        {icon}
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Rating y testimonial mini */}
+                  <div className="text-center">
+                    <div className="flex justify-center mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 1.5 + i * 0.1 }}
+                        >
+                          <FaStar className="text-yellow-400 text-lg mx-1" />
+                        </motion.div>
+                      ))}
+                    </div>
+                    <p className="text-white text-sm italic">"Excelente calidad y servicio"</p>
+                    <p className="text-blue-300 text-xs mt-1">- Clientes satisfechos</p>
+                  </div>
+                </motion.div>
+                
+                {/* Elementos flotantes alrededor */}
+                {[
+                  { icon: '🏆', position: 'top-4 right-4', delay: 2 },
+                  { icon: '💼', position: 'bottom-4 left-4', delay: 2.5 },
+                  { icon: '🎯', position: 'top-1/2 -left-8', delay: 3 },
+                  { icon: '⚡', position: 'top-1/2 -right-8', delay: 3.5 },
+                ].map((element, index) => (
+                  <motion.div
+                    key={index}
+                    className={`absolute ${element.position} text-4xl`}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ 
+                      opacity: [0, 1, 0.7, 1],
+                      scale: [0, 1.2, 0.9, 1],
+                      y: [0, -10, 0],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      delay: element.delay,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    {element.icon}
+                  </motion.div>
+                ))}
               </div>
-              <div className="text-center">
-                <div className="font-bold text-2xl text-orange-300">50+</div>
-                <div className="text-blue-200">Productos</div>
-              </div>
-              <div className="text-center">
-                <div className="font-bold text-2xl text-orange-300">24h</div>
-                <div className="text-blue-200">Respuesta</div>
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.div 
-            className="lg:w-1/2"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <div className="relative">
-              <UniformAnimation />
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </motion.section>
 
@@ -253,7 +523,6 @@ const Inicio = () => {
               En Catania, ofrecemos una variedad de productos diseñados para satisfacer las necesidades de tu empresa. Desde uniformes hasta artículos promocionales.
             </p>
           </motion.div>
-
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             variants={staggerChildren}
@@ -309,7 +578,7 @@ const Inicio = () => {
                       <motion.button 
                         onClick={(e) => {
                           e.preventDefault();
-                          addToCart();
+                          openQuoteEmail();
                         }}
                         className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300"
                         whileHover={{ scale: 1.02 }}
@@ -322,7 +591,7 @@ const Inicio = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        Ver Detalles
+                        Ver catalogo
                       </motion.button>
                     </div>
                   </div>
@@ -330,7 +599,6 @@ const Inicio = () => {
               </motion.article>
             ))}
           </motion.div>
-
           <motion.div 
             className="mt-16 flex flex-col sm:flex-row justify-center items-center gap-4"
             variants={fadeInUp}
@@ -338,10 +606,13 @@ const Inicio = () => {
             <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
               Ver más productos
             </button>
-            <a href="#" className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors">
+            <button 
+              onClick={openQuoteEmail}
+              className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+            >
               <span>Cotizar ahora</span>
               <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </button>
           </motion.div>
         </div>
       </motion.section>
@@ -368,7 +639,6 @@ const Inicio = () => {
               Ofrecemos una variedad de servicios de personalización para satisfacer todas tus necesidades con la más alta calidad.
             </p>
           </motion.div>
-
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
             variants={staggerChildren}
@@ -414,7 +684,6 @@ const Inicio = () => {
               </motion.article>
             ))}
           </motion.div>
-
           <motion.div 
             className="mt-16 flex flex-col sm:flex-row justify-center items-center gap-4"
             variants={fadeInUp}
@@ -422,10 +691,13 @@ const Inicio = () => {
             <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
               Ver Más Servicios
             </button>
-            <a href="#" className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors">
+            <button 
+              onClick={openQuoteEmail}
+              className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+            >
               <span>Servicios completos</span>
               <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </button>
           </motion.div>
         </div>
       </motion.section>
@@ -452,7 +724,6 @@ const Inicio = () => {
               Ofrecemos productos diseñados para satisfacer las necesidades más exigentes de tu empresa con calidad excepcional.
             </p>
           </motion.div>
-
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
             variants={staggerChildren}
@@ -501,7 +772,6 @@ const Inicio = () => {
               </motion.article>
             ))}
           </motion.div>
-
           <motion.div 
             className="mt-16 flex flex-col sm:flex-row justify-center items-center gap-4"
             variants={fadeInUp}
@@ -509,18 +779,21 @@ const Inicio = () => {
             <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-3 rounded-xl font-semibold transition-all duration-300">
               Ver Más Productos
             </button>
-            <a href="#" className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors">
+            <button 
+              onClick={openQuoteEmail}
+              className="group flex items-center text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+            >
               <span>Cotizar productos</span>
               <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </button>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* Testimonios Mejorados */}
+      {/* Sección de Clientes - Carrusel */}
       <motion.section
-        id="testimonios"
-        className="py-24 bg-gradient-to-br from-gray-50 to-gray-100"
+        id="clientes"
+        className="py-24 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden"
         initial="initial"
         whileInView="animate"
         viewport={{ once: true }}
@@ -529,105 +802,174 @@ const Inicio = () => {
         <div className="max-w-7xl mx-auto px-4">
           <motion.div className="text-center mb-16" variants={fadeInUp}>
             <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              Testimonios
+              Nuestros Clientes
             </span>
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
-              Lo que Dicen Nuestros 
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Clientes</span>
+              Empresas que Confían en 
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> Nosotros</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              La satisfacción de nuestros clientes es nuestro mayor logro y motivación diaria.
+              Trabajamos con empresas líderes que valoran la calidad y el profesionalismo en sus uniformes y artículos promocionales.
             </p>
           </motion.div>
 
+          {/* Carrusel de logos */}
           <motion.div 
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+            className="relative"
+            variants={fadeInUp}
+          >
+            <div className="flex items-center justify-center">
+              <div className="w-full max-w-6xl overflow-hidden">
+                <motion.div
+                  className="flex items-center gap-16"
+                  animate={{
+                    x: [0, -100 * 8], // Mover según el número de logos
+                  }}
+                  transition={{
+                    duration: 30,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
+                  {/* Array de logos de clientes - puedes agregar más aquí */}
+                  {[
+                    { name: "Coca Cola", logo: "https://via.placeholder.com/150x80/FF0000/FFFFFF?text=COCA-COLA" },
+                    { name: "Solfran", logo: "https://via.placeholder.com/150x80/0066CC/FFFFFF?text=SOLFRAN" },
+                    { name: "PEMEX", logo: "https://via.placeholder.com/150x80/006633/FFFFFF?text=PEMEX" },
+                    { name: "IMSS", logo: "https://via.placeholder.com/150x80/0099CC/FFFFFF?text=IMSS" },
+                    { name: "CFE", logo: "https://via.placeholder.com/150x80/FF6600/FFFFFF?text=CFE" },
+                    { name: "Walmart", logo: "https://via.placeholder.com/150x80/004C91/FFFFFF?text=WALMART" },
+                    { name: "OXXO", logo: "https://via.placeholder.com/150x80/FF0000/FFFFFF?text=OXXO" },
+                    { name: "Soriana", logo: "https://via.placeholder.com/150x80/E31E24/FFFFFF?text=SORIANA" },
+                    // Duplicamos los logos para que el carrusel sea continuo
+                    { name: "Coca Cola", logo: "https://via.placeholder.com/150x80/FF0000/FFFFFF?text=COCA-COLA" },
+                    { name: "Solfran", logo: "https://via.placeholder.com/150x80/0066CC/FFFFFF?text=SOLFRAN" },
+                    { name: "PEMEX", logo: "https://via.placeholder.com/150x80/006633/FFFFFF?text=PEMEX" },
+                    { name: "IMSS", logo: "https://via.placeholder.com/150x80/0099CC/FFFFFF?text=IMSS" },
+                    { name: "CFE", logo: "https://via.placeholder.com/150x80/FF6600/FFFFFF?text=CFE" },
+                    { name: "Walmart", logo: "https://via.placeholder.com/150x80/004C91/FFFFFF?text=WALMART" },
+                    { name: "OXXO", logo: "https://via.placeholder.com/150x80/FF0000/FFFFFF?text=OXXO" },
+                    { name: "Soriana", logo: "https://via.placeholder.com/150x80/E31E24/FFFFFF?text=SORIANA" },
+                  ].map((client, index) => (
+                    <motion.div
+                      key={index}
+                      className="flex-shrink-0 group"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 w-40 h-24 flex items-center justify-center group-hover:border-blue-300">
+                        <img
+                          src={client.logo}
+                          alt={`${client.name} Logo`}
+                          className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Gradientes para crear efecto de desvanecimiento en los bordes */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-gray-100 to-transparent pointer-events-none z-10"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-gray-100 to-transparent pointer-events-none z-10"></div>
+          </motion.div>
+
+          {/* Estadísticas de clientes */}
+          <motion.div 
+            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center"
             variants={staggerChildren}
           >
             {[
-              {
-                quote: "La calidad de los uniformes es excepcional y el servicio al cliente es impecable. Definitivamente recomendamos Catania.",
-                author: "María López",
-                position: "Gerente",
-                company: "Coca Cola",
-                avatar: Umu,
-                logo: CocaColaLogo,
-                rating: 5
-              },
-              {
-                quote: "Catania siempre cumple con nuestras expectativas y plazos de entrega. Su equipo es muy profesional y dedicado.",
-                author: "Juan Pérez",
-                position: "Trabajador",
-                company: "Solfran",
-                avatar: Diferencia,
-                logo: SolfranLogo,
-                rating: 5
-              }
-            ].map((testimonial, index) => (
-              <motion.article
+              { number: "500+", label: "Empresas Atendidas", icon: "🏢" },
+              { number: "50+", label: "Sectores Diferentes", icon: "🎯" },
+              { number: "25+", label: "Años de Experiencia", icon: "📅" }
+            ].map((stat, index) => (
+              <motion.div
                 key={index}
-                className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden"
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-200"
                 variants={fadeInUp}
                 whileHover={{ y: -8 }}
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 opacity-5 rounded-full -translate-y-16 translate-x-16"></div>
-                
-                <FaQuoteLeft className="text-3xl text-blue-500 mb-6 opacity-50" />
-                
-                <div className="flex items-center mb-6">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <FaStar key={i} className="text-yellow-400 text-sm" />
-                  ))}
-                </div>
-                
-                <blockquote className="text-gray-800 text-lg italic mb-8 leading-relaxed relative z-10">
-                  "{testimonial.quote}"
-                </blockquote>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <img 
-                      src={testimonial.avatar} 
-                      alt={testimonial.author}
-                      className="w-14 h-14 rounded-full mr-4 object-cover border-2 border-gray-200"
-                    />
-                    <div>
-                      <p className="font-bold text-gray-800">{testimonial.author}</p>
-                      <p className="text-gray-600 text-sm">{testimonial.position}, {testimonial.company}</p>
-                    </div>
-                  </div>
-                  
-                  <img 
-                    src={testimonial.logo} 
-                    alt={`${testimonial.company} Logo`}
-                    className="h-8 opacity-70 group-hover:opacity-100 transition-opacity"
-                  />
-                </div>
-              </motion.article>
+                <div className="text-4xl mb-4">{stat.icon}</div>
+                <div className="text-4xl font-bold text-blue-600 mb-2">{stat.number}</div>
+                <div className="text-gray-600 font-medium">{stat.label}</div>
+              </motion.div>
             ))}
+          </motion.div>
+
+          {/* CTA para nuevos clientes */}
+          <motion.div 
+            className="mt-16 text-center"
+            variants={fadeInUp}
+          >
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-200 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                ¿Tu empresa también quiere unirse a nuestros clientes satisfechos?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Únete a las empresas líderes que ya confían en Catania para sus uniformes y artículos promocionales.
+              </p>
+              <motion.button
+                onClick={openQuoteEmail}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 inline-flex items-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Solicitar Información
+                <FaArrowRight className="ml-2" />
+              </motion.button>
+            </div>
           </motion.div>
         </div>
       </motion.section>
 
-      {/* CTA Mejorado */}
+      {/* CTA Mejorado con Esquema de Colores Azules */}
       <motion.section
         id="contacto"
-        className="py-24 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden"
+        className="py-24 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 text-white relative overflow-hidden"
         initial="initial"
         whileInView="animate"
         viewport={{ once: true }}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-        <div className="absolute top-20 right-20 w-72 h-72 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
+        {/* Elementos decorativos de fondo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/5"></div>
+        <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-blue-300/10 to-indigo-300/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-cyan-300/10 to-blue-300/10 rounded-full blur-3xl"></div>
         
-        <div className="relative max-w-4xl mx-auto px-4 text-center">
+        {/* Partículas flotantes */}
+        <div className="absolute inset-0">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-gradient-to-r from-white/20 to-blue-300/20 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                x: [0, Math.random() * 10 - 5, 0],
+                opacity: [0.2, 0.6, 0.2],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+        
+        <div className="relative max-w-4xl mx-auto px-4 text-center z-10">
           <motion.div variants={fadeInUp}>
-            <span className="inline-block bg-orange-500 bg-opacity-20 backdrop-blur-sm text-orange-200 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+            <span className="inline-block bg-gradient-to-r from-blue-500/20 to-indigo-500/20 backdrop-blur-md text-blue-200 px-6 py-3 rounded-full text-sm font-semibold mb-8 border border-blue-300/20">
               Descarga Gratis
             </span>
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
               Descarga nuestro 
-              <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent"> catálogo</span> hoy
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent"> catálogo</span> hoy
             </h2>
             <p className="text-xl mb-12 text-blue-100 leading-relaxed max-w-2xl mx-auto">
               Solicita información sobre nuestros productos y servicios personalizados para tu empresa o institución. ¡Es completamente gratis!
@@ -640,13 +982,14 @@ const Inicio = () => {
                   placeholder="Tu correo electrónico" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 p-4 rounded-xl text-gray-800 border-0 focus:ring-4 focus:ring-orange-300 outline-none shadow-lg"
+                  className="flex-1 p-4 rounded-xl text-gray-800 border-0 focus:ring-4 focus:ring-blue-300 outline-none shadow-lg"
                 />
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <motion.button 
-                  className="group flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                  onClick={openQuoteEmail}
+                  className="group flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -655,12 +998,13 @@ const Inicio = () => {
                 </motion.button>
                 
                 <motion.button 
-                  className="group flex-1 border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 flex items-center justify-center backdrop-blur-sm"
+                  onClick={openWhatsApp}
+                  className="group flex-1 border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 flex items-center justify-center backdrop-blur-sm"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <FaPhone className="mr-2" />
-                  Consultar
+                  <FaWhatsapp className="mr-2" />
+                  WhatsApp
                 </motion.button>
               </div>
             </div>
@@ -672,8 +1016,8 @@ const Inicio = () => {
                 <span>WhatsApp: +52 123 456 7890</span>
               </div>
               <div className="flex items-center gap-2">
-                <FaEnvelope className="text-orange-400" />
-                <span>info@catania.com</span>
+                <FaEnvelope className="text-cyan-400" />
+                <span>ventas2@catania.com.mx</span>
               </div>
             </div>
           </motion.div>
@@ -684,12 +1028,45 @@ const Inicio = () => {
       <footer className="bg-gray-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            {/* Logo y descripción */}
+            {/* Descripción de la empresa */}
             <div className="md:col-span-1">
-              <img src={Logo} alt="Catania Logo" className="h-10 mb-4" />
+              <h4 className="font-bold text-lg mb-4 text-orange-400">Catania</h4>
               <p className="text-gray-400 leading-relaxed">
                 Especialistas en uniformes y artículos promocionales de alta calidad para empresas e instituciones.
               </p>
+              {/* Redes sociales movidas aquí */}
+              <div className="flex gap-3 mt-4">
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  <FaFacebookF className="text-sm" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-pink-500 hover:to-purple-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  <FaInstagram className="text-sm" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-gray-800 hover:bg-blue-400 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  <FaTwitter className="text-sm" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  <FaLinkedinIn className="text-sm" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  <FaYoutube className="text-sm" />
+                </a>
+              </div>
             </div>
             
             {/* Enlaces rápidos */}
@@ -710,7 +1087,14 @@ const Inicio = () => {
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">Uniformes</a>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">Promocionales</a>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">Especiales</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Catálogo</a>
+                <a 
+                  href="https://wa.me/5212345678900?text=Hola,%20me%20interesa%20cotizar%20sus%20productos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
+                  Cotizar
+                </a>
               </nav>
             </div>
             
@@ -724,7 +1108,7 @@ const Inicio = () => {
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <FaEnvelope />
-                  <span>info@catania.com</span>
+                  <span>ventas2@catania.com.mx</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <FaPhone />
@@ -734,7 +1118,7 @@ const Inicio = () => {
             </div>
           </div>
           
-          {/* Redes sociales y copyright */}
+          {/* Copyright */}
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-6">
               <span className="text-gray-400 text-sm">© 2025 Catania. Todos los derechos reservados.</span>
@@ -744,27 +1128,11 @@ const Inicio = () => {
                 <a href="#" className="text-gray-500 hover:text-white transition-colors">Términos de Servicio</a>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <span className="text-gray-400 text-sm">Síguenos:</span>
-              <div className="flex gap-3">
-                {['facebook', 'instagram', 'twitter', 'linkedin', 'youtube'].map((social, index) => (
-                  <a 
-                    key={social}
-                    href="#" 
-                    className="w-10 h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
-                  >
-                    <span className="text-sm font-bold">{social[0].toUpperCase()}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </footer>
     </div>
   );
 };
-
 
 export default Inicio;
