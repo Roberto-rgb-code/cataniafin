@@ -1,12 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import LazyLoad from 'react-lazyload';
 import './UniformeDetalle.css';
-
-const HOVER_ZOOM_SCALE = 2.4;      // zoom al pasar el mouse en la imagen principal
-const LB_MIN_ZOOM = 1;
-const LB_MAX_ZOOM = 5;
-const LB_ZOOM_STEP = 0.5;
 
 const UniformeDetalle = () => {
   const { id } = useParams();
@@ -15,100 +11,10 @@ const UniformeDetalle = () => {
   const [uniforme, setUniforme] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Hover zoom (main image)
-  const [hoverZoom, setHoverZoom] = useState(false);
-  const [hoverOrigin, setHoverOrigin] = useState('50% 50%');
-
-  // Lightbox
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lbIndex, setLbIndex] = useState(0);
-  const [lbZoom, setLbZoom] = useState(1);
-  const [lbDragging, setLbDragging] = useState(false);
-  const [lbPos, setLbPos] = useState({ x: 0, y: 0 });
-  const [lbDragStart, setLbDragStart] = useState({ x: 0, y: 0 });
-
-  const mainImgRef = useRef(null);
-  const thumbRefs = useRef(new Map());
-  const lbImgRef = useRef(null);
-
-  useEffect(() => {
-    fetchUniforme();
-    return () => {
-      setHoverZoom(false);
-      setHoverOrigin('50% 50%');
-      setLightboxOpen(false);
-      setLbZoom(1);
-      setLbPos({ x: 0, y: 0 });
-      setSelectedIndex(0);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  useEffect(() => {
-    if (!lightboxOpen) return;
-    const onKey = (e) => {
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-      if ((e.key === '+' || e.key === '=') && lbZoom < LB_MAX_ZOOM) setLbZoom(z => Math.min(LB_MAX_ZOOM, z + LB_ZOOM_STEP));
-      if ((e.key === '-' || e.key === '_') && lbZoom > LB_MIN_ZOOM) setLbZoom(z => Math.max(LB_MIN_ZOOM, z - LB_ZOOM_STEP));
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [lightboxOpen, lbZoom]);
-
-  // Lazy loading with Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const img = entry.target;
-            const dataSrc = img.getAttribute('data-src');
-            if (dataSrc) {
-              img.src = dataSrc;
-              img.removeAttribute('data-src');
-              observer.unobserve(img);
-            }
-          }
-        });
-      },
-      { rootMargin: '200px', threshold: 0.1 }
-    );
-
-    if (mainImgRef.current) observer.observe(mainImgRef.current);
-    thumbRefs.current.forEach((img) => {
-      if (img) observer.observe(img);
-    });
-    if (lbImgRef.current) observer.observe(lbImgRef.current);
-
-    return () => {
-      if (mainImgRef.current) observer.unobserve(mainImgRef.current);
-      thumbRefs.current.forEach((img) => {
-        if (img) observer.unobserve(img);
-      });
-      if (lbImgRef.current) observer.unobserve(lbImgRef.current);
-    };
-  }, [uniforme, selectedIndex, lbIndex, lightboxOpen]);
-
-  // Preload main image and first thumbnail
-  useEffect(() => {
-    if (!uniforme || !uniforme.fotos || uniforme.fotos.length === 0) return;
-    const preloadImages = () => {
-      const mainImage = uniforme.fotos[0];
-      if (mainImage) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = `${mainImage}?w=800&q=80`;
-        document.head.appendChild(link);
-      }
-    };
-    preloadImages();
-  }, [uniforme]);
+  // Modal fullscreen
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchUniforme = async () => {
     setLoading(true);
@@ -122,21 +28,7 @@ const UniformeDetalle = () => {
       if (!found) found = list.find(p => (p.nombre || '').toLowerCase() === routeId);
       if (!found) { setUniforme(null); return; }
 
-      const u = {
-        id: found.id,
-        nombre: found.nombre || '',
-        descripcion: found.descripcion || '',
-        material: found.material || '',
-        uso: Array.isArray(found.uso) ? found.uso : (found.uso ? String(found.uso).split(',').map(s=>s.trim()) : []),
-        tallas: Array.isArray(found.tallas) ? found.tallas : (found.tallas ? String(found.tallas).split(',').map(s=>s.trim()) : []),
-        color: Array.isArray(found.color) ? found.color : (found.color ? String(found.color).split(',').map(s=>s.trim()) : []),
-        categoria: found.categoria || 'General',
-        tipo: found.tipo || 'General',
-        fotos: Array.isArray(found.fotos) ? found.fotos : [],
-        notas_color: found.notas_color || null,
-      };
-
-      setUniforme(u);
+      setUniforme(found);
       setSelectedIndex(0);
     } catch (err) {
       console.error('Error al leer /product.json:', err);
@@ -146,81 +38,34 @@ const UniformeDetalle = () => {
     }
   };
 
-  // Hover zoom handlers
-  const onMainEnter = () => setHoverZoom(true);
-  const onMainLeave = () => { setHoverZoom(false); setHoverOrigin('50% 50%'); };
-  const onMainMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setHoverOrigin(`${x}% ${y}%`);
-  };
+  useEffect(() => {
+    fetchUniforme();
+    // eslint-disable-next-line
+  }, [id]);
 
-  // Lightbox controls
-  const openLightbox = (startIndex) => {
-    setLbIndex(startIndex ?? selectedIndex);
-    setLbZoom(1);
-    setLbPos({ x: 0, y: 0 });
-    setLightboxOpen(true);
-  };
-  const closeLightbox = () => {
-    setLightboxOpen(false);
-    setLbZoom(1);
-    setLbPos({ x: 0, y: 0 });
-    setLbDragging(false);
-  };
-  const nextImage = () => setLbIndex(i => Math.min((uniforme?.fotos?.length || 1) - 1, i + 1));
-  const prevImage = () => setLbIndex(i => Math.max(0, i - 1));
-
-  const onLbWheel = (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -LB_ZOOM_STEP : LB_ZOOM_STEP;
-    setLbZoom(z => Math.max(LB_MIN_ZOOM, Math.min(LB_MAX_ZOOM, z + delta)));
-  };
-  const onLbMouseDown = (e) => {
-    setLbDragging(true);
-    setLbDragStart({ x: e.clientX - lbPos.x, y: e.clientY - lbPos.y });
-  };
-  const onLbMouseMove = (e) => {
-    if (!lbDragging) return;
-    setLbPos({ x: e.clientX - lbDragStart.x, y: e.clientY - lbDragStart.y });
-  };
-  const onLbMouseUp = () => setLbDragging(false);
-
-  if (loading) {
-    return (
-      <div className="uniforme-detalle-container">
-        <div className="skeleton-header" />
-        <div className="skeleton-body">
-          <div className="skeleton-image" />
-          <div className="skeleton-info">
-            <div className="skeleton-line w-80" />
-            <div className="skeleton-line w-60" />
-            <div className="skeleton-line w-72" />
-            <div className="skeleton-line w-56" />
-          </div>
-        </div>
+  if (loading) return <div className="uniforme-detalle-container">Cargando...</div>;
+  if (error) return (
+    <div className="uniforme-detalle-container error">
+      {error}
+      <div className="cta-actions">
+        <button className="btn btn-secondary" onClick={() => navigate('/uniformes')}>
+          <span className="btn-icon" aria-hidden>←</span>
+          Volver al catálogo
+        </button>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="uniforme-detalle-container error">
-        <p>{error}</p>
-        <button className="btn" onClick={() => navigate('/uniformes')}>Volver al catálogo</button>
+    </div>
+  );
+  if (!uniforme) return (
+    <div className="uniforme-detalle-container error">
+      Uniforme no encontrado
+      <div className="cta-actions">
+        <button className="btn btn-secondary" onClick={() => navigate('/uniformes')}>
+          <span className="btn-icon" aria-hidden>←</span>
+          Volver al catálogo
+        </button>
       </div>
-    );
-  }
-
-  if (!uniforme) {
-    return (
-      <div className="uniforme-detalle-container error">
-        <p>Uniforme no encontrado</p>
-        <button className="btn" onClick={() => navigate('/uniformes')}>Volver al catálogo</button>
-      </div>
-    );
-  }
+    </div>
+  );
 
   const fotos = Array.isArray(uniforme.fotos) ? uniforme.fotos : [];
   const mainImg = fotos[selectedIndex] || null;
@@ -234,147 +79,114 @@ const UniformeDetalle = () => {
       </header>
 
       <div className="uniforme-detail-content">
-        {/* GALERÍA */}
+        {/* Galería */}
         <section className="gallery">
           {fotos.length > 1 && (
-            <div className="thumbnails" role="tablist" aria-label="Miniaturas">
-              {fotos.map((url, index) => {
-                const thumbSrc = url ? `${url}?w=84&q=20&blur=10` : 'https://via.placeholder.com/84x84?text=No+image';
-                const fullSrc = url ? `${url}?w=84&q=80` : 'https://via.placeholder.com/84x84?text=No+image';
-                return (
-                  <button
-                    key={index}
-                    type="button"
-                    aria-label={`Ver imagen ${index + 1}`}
-                    className={`thumb-btn ${index === selectedIndex ? 'active' : ''}`}
-                    onClick={() => setSelectedIndex(index)}
-                  >
-                    <img
-                      src={thumbSrc}
-                      data-src={fullSrc}
-                      alt={`Thumbnail ${index + 1}`}
-                      ref={(el) => {
-                        if (el) thumbRefs.current.set(index, el);
-                      }}
-                      onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
-                    />
-                  </button>
-                );
-              })}
+            <div className="thumbnails">
+              {fotos.map((url, i) => (
+                <img
+                  key={i}
+                  src={`${url}?w=84&q=60`}
+                  alt={`Miniatura ${i + 1}`}
+                  className={`thumbnail ${i === selectedIndex ? 'active' : ''}`}
+                  onClick={() => setSelectedIndex(i)}
+                />
+              ))}
             </div>
           )}
 
           <div
-            className={`main-image-wrapper ${hoverZoom ? 'hovering' : ''}`}
-            onMouseEnter={onMainEnter}
-            onMouseLeave={onMainLeave}
-            onMouseMove={onMainMove}
-            onClick={() => openLightbox(selectedIndex)}
-            title="Click para ampliar"
+            className="main-image-wrapper"
+            onClick={() => setIsModalOpen(true)}
+            title="Click para ver en grande"
           >
             {mainImg ? (
-              <img
-                ref={mainImgRef}
-                src={`${mainImg}?w=800&q=20&blur=10`}
-                data-src={`${mainImg}?w=800&q=80`}
-                alt={uniforme.nombre}
-                className="main-image"
-                loading="lazy"
-                style={hoverZoom ? { transform: `scale(${HOVER_ZOOM_SCALE})`, transformOrigin: hoverOrigin } : undefined}
-                onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/800x800?text=No+image'; }}
-              />
+              <LazyLoad height={400} offset={200} once>
+                <img
+                  src={`${mainImg}?w=800&q=80`}
+                  alt={uniforme.nombre}
+                  className="main-image"
+                />
+              </LazyLoad>
             ) : (
               <div className="main-image placeholder">No hay foto</div>
             )}
-            <div className="hint-zoom">Pasa el mouse para acercar · Click para ver a pantalla completa</div>
+            <div className="hint-zoom">Click para ampliar</div>
           </div>
         </section>
 
-        {/* INFO */}
+        {/* Info */}
         <section className="uniforme-info">
           <h2 className="product-name">{uniforme.nombre}</h2>
           {uniforme.descripcion && <p className="product-description">{uniforme.descripcion}</p>}
 
           <div className="product-attrs">
-            <p className="product-category"><strong>Categoría:</strong> {uniforme.categoria}</p>
-            <p className="product-type"><strong>Tipo:</strong> {uniforme.tipo}</p>
+            <p><strong>Categoría:</strong> {uniforme.categoria}</p>
+            <p><strong>Tipo:</strong> {uniforme.tipo}</p>
             {!!uniforme.material && <p><strong>Material:</strong> {uniforme.material}</p>}
-            {!!(uniforme.uso && uniforme.uso.length) && <p><strong>Uso:</strong> {uniforme.uso.join(', ')}</p>}
-            {!!(uniforme.tallas && uniforme.tallas.length) && <p><strong>Tallas:</strong> {uniforme.tallas.join(', ')}</p>}
-            {!!(uniforme.color && uniforme.color.length) && <p><strong>Color:</strong> {uniforme.color.join(', ')}</p>}
-            {!!uniforme.notas_color && <p className="notes"><em>{uniforme.notas_color}</em></p>}
+            {!!(uniforme.tallas?.length) && <p><strong>Tallas:</strong> {uniforme.tallas.join(', ')}</p>}
+            {!!(uniforme.color?.length) && <p><strong>Color:</strong> {uniforme.color.join(', ')}</p>}
           </div>
 
-          <div className="cta-row">
-            <button className="btn ghost" onClick={() => navigate('/uniformes')}>
-              ← Volver al catálogo
-            </button>
-            <a
-              className="btn primary"
-              href={`https://wa.me/5210000000000?text=${encodeURIComponent(`Hola, quiero cotizar el modelo ${uniforme.nombre} (${uniforme.categoria} · ${uniforme.tipo}).`)}`}
-              target="_blank" rel="noreferrer"
+          {/* Nota extra */}
+          <p className="product-note">
+            <strong>Puedes elegir la combinación de colores de acuerdo a tus necesidades</strong>
+          </p>
+
+          {/* CTA */}
+          <div className="cta-actions" role="group" aria-label="Acciones">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => navigate('/uniformes')}
             >
+              <span className="btn-icon" aria-hidden>←</span>
+              Volver al catálogo
+            </button>
+
+            <a
+              className="btn btn-whatsapp"
+              href={`https://wa.me/5210000000000?text=${encodeURIComponent(
+                `Hola, quiero cotizar el modelo ${uniforme.nombre} (${uniforme.categoria} · ${uniforme.tipo}).`
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Cotizar por WhatsApp"
+            >
+              <svg className="wa-icon" viewBox="0 0 32 32" aria-hidden>
+                <path d="M19.11 17.26c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.78-1.48-1.74-1.66-2.04-.18-.3-.02-.47.13-.62.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.63-.93-2.23-.24-.57-.48-.5-.68-.5l-.58-.01c-.2 0-.52.07-.8.37-.28.3-1.06 1.04-1.06 2.54s1.09 2.95 1.24 3.15c.15.2 2.15 3.28 5.2 4.6.73.31 1.3.5 1.75.64.74.24 1.41.21 1.94.13.59-.09 1.77-.72 2.02-1.41.25-.69.25-1.27.17-1.41-.07-.14-.27-.22-.57-.37z" fill="currentColor"/>
+                <path d="M15.98 2.4C8.96 2.4 3.25 8.1 3.25 15.12c0 2.26.6 4.37 1.66 6.2L3 29l7.9-1.85a12.7 12.7 0 0 0 5.08 1.07c7.03 0 12.73-5.7 12.73-12.72 0-7.03-5.7-12.72-12.73-12.72zm0 22.96c-1.94 0-3.74-.5-5.3-1.38l-.38-.21-4.69 1.1 1.25-4.57-.24-.4a10.17 10.17 0 1 1 9.36 5.46z" fill="currentColor"/>
+              </svg>
               Cotizar por WhatsApp
             </a>
           </div>
         </section>
       </div>
 
-      {/* LIGHTBOX */}
-      {lightboxOpen && (
-        <div className="lightbox" role="dialog" aria-modal="true" aria-label="Visor de imágenes">
-          <button className="lb-close" onClick={closeLightbox} aria-label="Cerrar">×</button>
-
-          <button className="lb-nav prev" onClick={prevImage} aria-label="Anterior">‹</button>
-          <button className="lb-nav next" onClick={nextImage} aria-label="Siguiente">›</button>
-
-          <div
-            className="lb-stage"
-            onWheel={onLbWheel}
-            onMouseDown={onLbMouseDown}
-            onMouseMove={onLbMouseMove}
-            onMouseUp={onLbMouseUp}
-            onMouseLeave={onLbMouseUp}
-          >
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setIsModalOpen(false)} aria-label="Cerrar">×</button>
             <img
-              ref={lbImgRef}
-              src={`${fotos[lbIndex]}?w=1200&q=20&blur=10`}
-              data-src={`${fotos[lbIndex]}?w=1200&q=80`}
-              alt={`${uniforme.nombre} ${lbIndex + 1}`}
-              style={{ transform: `translate(${lbPos.x}px, ${lbPos.y}px) scale(${lbZoom})`, cursor: lbDragging ? 'grabbing' : (lbZoom > 1 ? 'grab' : 'auto') }}
-              draggable={false}
-              loading="lazy"
-              onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/1200x1200?text=No+image'; }}
+              src={`${fotos[selectedIndex]}?w=1600&q=90`}
+              alt={`${uniforme.nombre} grande`}
+              className="modal-image"
             />
+            {fotos.length > 1 && (
+              <div className="modal-thumbnails">
+                {fotos.map((url, i) => (
+                  <img
+                    key={i}
+                    src={`${url}?w=64&q=60`}
+                    alt={`mini ${i + 1}`}
+                    className={`modal-thumb ${i === selectedIndex ? 'active' : ''}`}
+                    onClick={() => setSelectedIndex(i)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-
-          <div className="lb-controls">
-            <button onClick={() => setLbZoom(z => Math.max(LB_MIN_ZOOM, z - LB_ZOOM_STEP))} aria-label="Alejar">−</button>
-            <span className="lb-zoom-indicator">{Math.round(lbZoom * 100)}%</span>
-            <button onClick={() => setLbZoom(z => Math.min(LB_MAX_ZOOM, z + LB_ZOOM_STEP))} aria-label="Acercar">+</button>
-            <button onClick={() => { setLbZoom(1); setLbPos({x:0,y:0}); }} aria-label="Restablecer">Reset</button>
-          </div>
-
-          {fotos.length > 1 && (
-            <div className="lb-strip">
-              {fotos.map((u, i) => {
-                const thumbSrc = u ? `${u}?w=64&q=20&blur=10` : 'https://via.placeholder.com/64x64?text=No+image';
-                const fullSrc = u ? `${u}?w=64&q=80` : 'https://via.placeholder.com/64x64?text=No+image';
-                return (
-                  <button key={i} className={`lb-thumb ${i===lbIndex?'active':''}`} onClick={() => setLbIndex(i)}>
-                    <img
-                      src={thumbSrc}
-                      data-src={fullSrc}
-                      alt={`mini ${i+1}`}
-                      ref={(el) => {
-                        if (el) thumbRefs.current.set(`lb-${i}`, el);
-                      }}
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
         </div>
       )}
     </div>

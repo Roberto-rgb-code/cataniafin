@@ -3,12 +3,73 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import { fetchProducts, fetchStocks } from "../services/api.js";
 
+// Custom SVG Icons
+const Icons = {
+  Search: ({ size = 20, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <circle cx="11" cy="11" r="8"/>
+      <path d="21 21l-4.35-4.35"/>
+    </svg>
+  ),
+  Filter: ({ size = 20, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+    </svg>
+  ),
+  Grid: ({ size = 16, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <rect x="3" y="3" width="7" height="7"/>
+      <rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+    </svg>
+  ),
+  List: ({ size = 16, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <line x1="8" y1="6" x2="21" y2="6"/>
+      <line x1="8" y1="12" x2="21" y2="12"/>
+      <line x1="8" y1="18" x2="21" y2="18"/>
+      <line x1="3" y1="6" x2="3.01" y2="6"/>
+      <line x1="3" y1="12" x2="3.01" y2="12"/>
+      <line x1="3" y1="18" x2="3.01" y2="18"/>
+    </svg>
+  ),
+  Package: ({ size = 20, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/>
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+      <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+      <line x1="12" y1="22.08" x2="12" y2="12"/>
+    </svg>
+  ),
+  Eye: ({ size = 16, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  AlertCircle: ({ size = 32, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  ),
+  Loader: ({ size = 48, className = "" }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`animate-spin ${className}`}>
+      <path d="M21 12a9 9 0 11-6.219-8.56"/>
+    </svg>
+  )
+};
+
 const Promocionales = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visibleProducts, setVisibleProducts] = useState(24);
+  const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('name');
   
   const [debug, setDebug] = useState({
     rawProducts: null,
@@ -62,7 +123,7 @@ const Promocionales = () => {
               ? product.subCategorias 
               : product.subCategorias 
                 ? [product.subCategorias] 
-                : [], // Añadido para subcategorías
+                : [],
             imageUrl: product.imagenesPadre?.[0] || 'https://via.placeholder.com/300x300?text=No+image',
             tipo: product.hijos?.[0]?.tipo || '',
             stock: stocksMap[product.skuPadre] || 0
@@ -137,15 +198,42 @@ const Promocionales = () => {
     setVisibleProducts(24);
   };
 
+  const sortProducts = (products, sortBy) => {
+    const sorted = [...products];
+    switch (sortBy) {
+      case 'name':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case 'stock':
+        return sorted.sort((a, b) => b.stock - a.stock);
+      case 'type':
+        return sorted.sort((a, b) => a.tipo.localeCompare(b.tipo));
+      default:
+        return sorted;
+    }
+  };
+
+  const sortedAndFilteredProducts = sortProducts(filteredProducts, sortBy);
+
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-center p-8 text-red-600">
-          <p className="text-xl mb-2">Error al cargar los productos</p>
-          <p>{error}</p>
-          <details className="mt-4 text-left">
-            <summary>Información de debug</summary>
-            <pre className="mt-2 p-4 bg-gray-100 rounded">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-center p-6">
+        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Icons.AlertCircle className="text-red-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error al cargar productos</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            Reintentar
+          </button>
+          <details className="mt-6 text-left">
+            <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
+              Información de debug
+            </summary>
+            <pre className="mt-2 p-4 bg-gray-100 rounded text-xs overflow-auto max-h-40">
               {JSON.stringify(debug, null, 2)}
             </pre>
           </details>
@@ -155,65 +243,178 @@ const Promocionales = () => {
   }
 
   if (loading) {
-    return <div>Cargando productos...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-center">
+        <div className="text-center">
+          <Icons.Loader className="text-orange-500 mx-auto mb-4" />
+          <p className="text-xl font-medium text-gray-700 mb-2">Cargando productos...</p>
+          <p className="text-gray-500">Obteniendo la información más reciente</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto p-6">
-      <div className="flex gap-8">
-        <Sidebar 
-          onSearch={handleSearch}
-          onFilterChange={handleFilterChange}
-          products={products}
-        />
-        
-        <div className="flex-1">
-          <div className="mb-4 text-sm text-gray-600">
-            Mostrando {filteredProducts.length} productos
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="text-center mb-8">
+            <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-sm font-medium rounded-full mb-4">
+              Catálogo de Productos
+            </span>
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              Promocionales Corporativos
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Descubre nuestra amplia selección de productos promocionales de alta calidad 
+              para fortalecer tu imagen corporativa
+            </p>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.slice(0, visibleProducts).map((product) => (
-              <Link 
-                to={`/promocionales/product/${product.id}`} 
-                key={product.id}
-                className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-shadow"
-              >
-                <div className="aspect-square mb-4 relative overflow-hidden">
-                  <img 
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/300x300?text=No+image';
-                    }}
-                  />
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="flex gap-8">
+          <Sidebar 
+            onSearch={handleSearch}
+            onFilterChange={handleFilterChange}
+            products={products}
+          />
+          
+          <div className="flex-1">
+            {/* Controls Bar */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Icons.Package />
+                  <span className="font-medium">
+                    Mostrando {sortedAndFilteredProducts.length} producto{sortedAndFilteredProducts.length !== 1 ? 's' : ''}
+                  </span>
                 </div>
-                <div className="text-center">
-                  <h2 className="text-[#242964] font-bold text-lg mb-1">
-                    {product.name}
-                  </h2>
-                  <p className="text-gray-600 mb-1">{product.tipo}</p>
-                  {product.stock > 0 && (
-                    <p className="text-sm text-green-600">
-                      Stock: {product.stock}
-                    </p>
-                  )}
+                
+                <div className="flex items-center gap-4">
+                  {/* Sort */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600">Ordenar por:</label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                    >
+                      <option value="name">Nombre</option>
+                      <option value="stock">Stock</option>
+                      <option value="type">Tipo</option>
+                    </select>
+                  </div>
+                  
+                  {/* View Mode */}
+                  <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      <Icons.Grid />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      <Icons.List />
+                    </button>
+                  </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-
-          {filteredProducts.length > visibleProducts && (
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={() => setVisibleProducts(prev => prev + 24)}
-                className="px-6 py-2 bg-[#242964] text-white rounded hover:bg-[#1e2255] transition-colors"
-              >
-                Cargar más productos
-              </button>
+              </div>
             </div>
-          )}
+
+            {/* Products Grid/List */}
+            {sortedAndFilteredProducts.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Icons.Package className="text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-800 mb-2">No se encontraron productos</h3>
+                <p className="text-gray-600">Intenta ajustar los filtros de búsqueda</p>
+              </div>
+            ) : (
+              <>
+                <div className={`${viewMode === 'grid' 
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
+                  : 'space-y-4'
+                }`}>
+                  {sortedAndFilteredProducts.slice(0, visibleProducts).map((product) => (
+                    <Link 
+                      to={`/promocionales/product/${product.id}`} 
+                      key={product.id}
+                      className={`group bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-orange-200 transition-all duration-300 overflow-hidden ${
+                        viewMode === 'list' ? 'flex items-center p-4' : 'block'
+                      }`}
+                    >
+                      <div className={`${viewMode === 'list' ? 'w-24 h-24 flex-shrink-0' : 'aspect-square'} overflow-hidden ${viewMode === 'grid' ? 'mb-4' : 'mr-4'}`}>
+                        <img 
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/300x300?text=No+image';
+                          }}
+                        />
+                      </div>
+                      
+                      <div className={`${viewMode === 'grid' ? 'p-4 text-center' : 'flex-1'}`}>
+                        <h2 className={`text-gray-800 font-semibold group-hover:text-orange-600 transition-colors ${
+                          viewMode === 'grid' ? 'text-lg mb-2' : 'text-base mb-1'
+                        }`}>
+                          {product.name}
+                        </h2>
+                        
+                        <div className={`${viewMode === 'list' ? 'flex items-center gap-4' : 'space-y-1'}`}>
+                          {product.tipo && (
+                            <p className="text-gray-500 text-sm">
+                              {product.tipo}
+                            </p>
+                          )}
+                          
+                          {product.stock > 0 && (
+                            <div className={`flex items-center gap-1 ${
+                              product.stock > 10 ? 'text-green-600' : 'text-yellow-600'
+                            }`}>
+                              <div className={`w-2 h-2 rounded-full ${
+                                product.stock > 10 ? 'bg-green-500' : 'bg-yellow-500'
+                              }`}></div>
+                              <span className="text-sm font-medium">
+                                Stock: {product.stock}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className={`${viewMode === 'grid' ? 'mt-3' : 'mt-1'}`}>
+                          <div className="flex items-center gap-1 text-orange-600 text-sm font-medium group-hover:gap-2 transition-all">
+                            <Icons.Eye />
+                            Ver detalles
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Load More Button */}
+                {sortedAndFilteredProducts.length > visibleProducts && (
+                  <div className="text-center mt-8">
+                    <button
+                      onClick={() => setVisibleProducts(prev => prev + 24)}
+                      className="px-8 py-3 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors shadow-sm hover:shadow-md font-medium"
+                    >
+                      Cargar más productos ({sortedAndFilteredProducts.length - visibleProducts} restantes)
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
